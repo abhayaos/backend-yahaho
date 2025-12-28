@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 const connectDB = require('./config/db');
 
@@ -31,65 +33,12 @@ const allowedOrigins = [
 // ===============================
 // 🛡️ CORS (Mobile + Web Safe)
 // ===============================
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Allow exact matches from allowedOrigins array
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    
-    // Allow all Vercel & Yahaho subdomains
-    if (
-      origin.endsWith('.vercel.app') ||
-      origin.endsWith('.yahaho.com')
-    ) {
-      return callback(null, true);
-    }
-    
-    // Allow specific development origins
-    if (origin && (origin === 'http://localhost:3000' || origin === 'http://localhost:5173' || origin === 'https://yahaho.vercel.app')) {
-      return callback(null, true);
-    }
-    
-    // For production, be more restrictive
-    if (process.env.NODE_ENV === 'production') {
-      // Allow common mobile origins
-      const mobileOriginPatterns = [
-        'capacitor://',
-        'ionic://',
-        'http://localhost',
-        'https://localhost',
-        'http://127.0.0.1',
-        'https://127.0.0.1',
-        'file://'
-      ];
-      
-      if (mobileOriginPatterns.some(pattern => origin.startsWith(pattern))) {
-        return callback(null, true);
-      }
-      
-      // In production, reject unknown origins
-      console.warn('⚠️ CORS blocked for:', origin);
-      return callback(new Error('Not allowed by CORS'));
-    }
-    
-    // For non-production environments, allow everything
-    console.warn('⚠️ CORS allowed for:', origin);
-    return callback(null, true);
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: true,
-  optionsSuccessStatus: 200
-}));
+app.use(require("cors")());
 
 // ===============================
 // 🧠 Preflight Fix (IMPORTANT)
 // ===============================
-app.options('*', cors());
+app.options('*', require("cors")());
 
 // ===============================
 // 🧩 Middlewares
