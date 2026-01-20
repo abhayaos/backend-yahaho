@@ -16,8 +16,8 @@
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.0",
-    "mongodb": "^7.0.0",
-    "mongoose": "^9.0.2",
+    "mongodb": "^6.10.0",
+    "mongoose": "^8.8.3",
     "multer": "^2.0.2"
   },
   "devDependencies": {

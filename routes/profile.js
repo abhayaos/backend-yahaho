@@ -222,6 +222,172 @@ router.post('/upload', auth, upload.single('avatar'), async (req, res) => {
   }
 });
 
+// @route   POST api/profile/favorites/:postId
+// @desc    Add post to favorites
+// @access  Private
+router.post('/favorites/:postId', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'User not found' 
+      });
+    }
+    
+    const postId = req.params.postId;
+    
+    // Check if post exists
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Post not found' 
+      });
+    }
+    
+    // Check if post is already in favorites
+    if (user.favorites.includes(postId)) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Post already in favorites' 
+      });
+    }
+    
+    // Add post to favorites
+    user.favorites.push(postId);
+    await user.save();
+    
+    res.json({
+      success: true,
+      message: 'Post added to favorites',
+      favorites: user.favorites
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server Error' 
+    });
+  }
+});
+
+// @route   DELETE api/profile/favorites/:postId
+// @desc    Remove post from favorites
+// @access  Private
+router.delete('/favorites/:postId', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'User not found' 
+      });
+    }
+    
+    const postId = req.params.postId;
+    
+    // Check if post exists
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Post not found' 
+      });
+    }
+    
+    // Check if post is in favorites
+    if (!user.favorites.includes(postId)) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Post not in favorites' 
+      });
+    }
+    
+    // Remove post from favorites
+    user.favorites = user.favorites.filter(id => id.toString() !== postId);
+    await user.save();
+    
+    res.json({
+      success: true,
+      message: 'Post removed from favorites',
+      favorites: user.favorites
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server Error' 
+    });
+  }
+});
+
+// @route   GET api/profile/favorites
+// @desc    Get user's favorite posts
+// @access  Private
+router.get('/favorites', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate('favorites');
+    if (!user) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'User not found' 
+      });
+    }
+    
+    // Transform the favorite posts to match the expected format
+    const favorites = user.favorites.map(post => ({
+      _id: post._id,
+      title: post.title,
+      content: post.content,
+      description: post.content,
+      clientName: post.postedByName,
+      clientAvatar: post.postedBy && post.postedBy.profile && post.postedBy.profile.avatar ? 
+        `https://backend-yahaho.vercel.app${post.postedBy.profile.avatar}` : 
+        `https://ui-avatars.com/api/?name=${post.postedByName}&background=random`,
+      projectType: ['Full-time', 'Part-time', 'Contract', 'Freelance'][Math.floor(Math.random() * 4)],
+      responses: post.responses,
+      views: post.views,
+      formattedDate: formatDate(post.createdAt),
+      postedBy: post.postedBy
+    }));
+    
+    res.json({
+      success: true,
+      favorites: favorites
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server Error' 
+    });
+  }
+});
+
+// Helper function to format dates
+function formatDate(date) {
+  const now = new Date();
+  const postDate = new Date(date);
+  
+  // Calculate difference in days
+  const diffTime = Math.abs(now - postDate);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  // If less than 1 day, show time
+  if (diffDays <= 1) {
+    return postDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  // If less than 7 days, show number of days
+  else if (diffDays < 7) {
+    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+  }
+  // Otherwise, show the date
+  else {
+    return postDate.toLocaleDateString();
+  }
+}
+
 // @route   GET api/profile/posts
 // @desc    Get current user's posts
 // @access  Private

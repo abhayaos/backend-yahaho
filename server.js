@@ -10,6 +10,7 @@ const profileRoutes = require('./routes/profile');
 const feedRoutes = require('./routes/feed');
 const postRoutes = require('./routes/post');
 const talentRoutes = require('./routes/talent');
+const notificationsRoutes = require('./routes/notifications');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,11 +24,11 @@ connectDB();
 // 🌍 Allowed Origins
 // ===============================
 const allowedOrigins = [
-  'http://localhost:3000',
+  'https://backend-yahaho.vercel.app',
   'http://localhost:5173',
   'https://yahaho.vercel.app',
   'https://www.yahaho.com',
-  'https://yahaho.com'
+  'https://yahaho.c om'
 ];
 
 // ===============================
@@ -55,6 +56,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/feed', feedRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/talent', talentRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // ===============================
 // ❤️ Health Check
