@@ -56,7 +56,8 @@ router.get('/', async (req, res) => {
       projectType: ['Full-time', 'Part-time', 'Contract', 'Freelance'][Math.floor(Math.random() * 4)],
       experience: ['Entry-level', 'Mid-level', 'Expert'][Math.floor(Math.random() * 3)],
       responses: post.responses,
-      views: post.views
+      views: post.views,
+      whatsappNumber: post.whatsappNumber
     }));
     
     res.json({ 

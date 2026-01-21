@@ -53,7 +53,7 @@ router.post('/', authenticateToken, async (req, res) => {
     }
     
     // Verify user data exists in token
-    if (!req.user || !req.user.userId) {
+    if (!req.user || !req.user.id) {
       return res.status(403).json({
         success: false,
         message: 'Invalid token data'
@@ -62,7 +62,7 @@ router.post('/', authenticateToken, async (req, res) => {
     
     // Get user details from database to ensure we have the name
     const User = require('../models/User');
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user.id);
     
     if (!user) {
       return res.status(404).json({
@@ -81,7 +81,7 @@ router.post('/', authenticateToken, async (req, res) => {
       skills: skills || [],
       location: location || 'Nepal',
       whatsappNumber: whatsappNumber || '',
-      postedBy: req.user.userId, // User ID from the token
+      postedBy: req.user.id, // User ID from the token
       postedByName: user.name // User name from the database
     });
     
@@ -154,7 +154,7 @@ router.get('/:id', async (req, res) => {
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const postId = req.params.id;
-    const userId = req.user.userId; // Get user ID from token
+    const userId = req.user.id; // Get user ID from token
     
     // Find the post by ID
     const post = await Post.findById(postId);
