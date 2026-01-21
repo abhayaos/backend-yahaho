@@ -6,7 +6,7 @@ const router = express.Router();
 // Create a new post
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    const { title, content, category, budget, duration, skills, location } = req.body;
+    const { title, content, category, budget, duration, skills, location, whatsappNumber } = req.body;
     
     // Basic validation
     if (!title?.trim() || !content?.trim()) {
@@ -80,6 +80,7 @@ router.post('/', authenticateToken, async (req, res) => {
       duration: duration || '1-2 weeks',
       skills: skills || [],
       location: location || 'Nepal',
+      whatsappNumber: whatsappNumber || '',
       postedBy: req.user.userId, // User ID from the token
       postedByName: user.name // User name from the database
     });

@@ -49,6 +49,10 @@ const postSchema = new mongoose.Schema({
   views: {
     type: Number,
     default: 0
+  },
+  whatsappNumber: {
+    type: String,
+    default: ''
   }
 }, {
   timestamps: true

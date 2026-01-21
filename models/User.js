@@ -36,6 +36,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  whatsappNumber: {
+    type: String,
+    default: ''
+  },
   website: {
     type: String,
     default: ''
