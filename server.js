@@ -11,6 +11,7 @@ const feedRoutes = require('./routes/feed');
 const postRoutes = require('./routes/post');
 const talentRoutes = require('./routes/talent');
 const notificationsRoutes = require('./routes/notifications');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -57,6 +58,7 @@ app.use('/api/feed', feedRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/talent', talentRoutes);
 app.use('/api/notifications', notificationsRoutes);
+app.use('/api/admin', adminRoutes);
 
 // ===============================
 // ❤️ Health Check
