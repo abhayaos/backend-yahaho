@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 const connectDB = require('./config/db');
 
@@ -44,11 +46,37 @@ app.options('*', require("cors")());
  
 
 // ===============================
+// 📁 Ensure Uploads Directory Exists
+// ===============================
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log('📁 Created uploads directory');
+}
+
+// ===============================
 // 🧩 Middlewares
 // ===============================
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static('uploads'));
+
+// ===============================
+// 🖼️ Serve Uploads with Error Handling
+// ===============================
+app.use('/uploads', express.static('uploads', {
+  fallthrough: false // Return 404 for missing files instead of next()
+}));
+
+// Handle missing upload files gracefully
+app.use('/uploads/*', (req, res) => {
+  console.log(`⚠️ Missing file requested: ${req.originalUrl}`);
+  // Send a default placeholder image or 404
+  res.status(404).json({
+    success: false,
+    message: 'File not found',
+    placeholder: true
+  });
+});
 
 // ===============================
 // 🚏 Routes
