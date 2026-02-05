@@ -29,7 +29,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://yahaho.vercel.app',
   'https://www.yahaho.com',
-  'https://yahaho.c om'
+  'https://yahaho.com',
+  'https://admin-yahaho.vercel.app'
 ];
 
 // ===============================
