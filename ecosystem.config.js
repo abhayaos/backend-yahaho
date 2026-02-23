@@ -6,7 +6,7 @@ module.exports = {
     exec_mode: 'cluster', // Use cluster mode for better performance
     env: {
       NODE_ENV: 'production',
-      PORT: 3000
+      PORT: 300
     },
     // Auto-restart if the app crashes
     restart_delay: 1000,
